@@ -1,26 +1,26 @@
-# HTTP Server - Taller 1 AREP
+# HTTP Server - AREP Workshop 1
 
-Un servidor HTTP básico implementado en Java que puede servir archivos estáticos (HTML, CSS, JavaScript, imágenes) y manejar servicios REST simples. Este proyecto demuestra los conceptos fundamentales de redes y protocolos HTTP mediante la implementación de un servidor web desde cero.
+A basic HTTP server implemented in Java that can serve static files (HTML, CSS, JavaScript, images) and handle simple REST services. This project demonstrates fundamental networking and HTTP protocol concepts through implementing a web server from scratch.
 
 ## Getting Started
 
-Estas instrucciones te permitirán obtener una copia del proyecto funcionando en tu máquina local para propósitos de desarrollo y pruebas.
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
 ### Prerequisites
 
-Para ejecutar este proyecto necesitas tener instalado:
+To run this project you need to have installed:
 
-- **Java 21** o superior
-- **Apache Maven 3.6** o superior
-- **Git** (para clonar el repositorio)
+- **Java 21** or higher
+- **Apache Maven 3.6** or higher
+- **Git** (to clone the repository)
 
-Para verificar si tienes Java instalado:
+To verify if you have Java installed:
 
 ```
 java -version
 ```
 
-Para verificar si tienes Maven instalado:
+To verify if you have Maven installed:
 
 ```
 mvn -version
@@ -28,40 +28,147 @@ mvn -version
 
 ### Installing
 
-Sigue estos pasos para configurar el entorno de desarrollo:
+Follow these steps to set up the development environment:
 
-1. **Clona el repositorio**
+1. **Clone the repository**
 
    ```
    git clone https://github.com/SebastianCardona-P/AREP-TALLER1.git
    cd AREP-TALLER1/httpserver
    ```
 
-2. **Compila el proyecto**
+2. **Compile the project**
 
    ```
    mvn clean compile
    ```
 
-3. **Ejecuta el servidor**
+3. **Run the server**
 
    ```
    mvn clean compile exec:java
    ```
 
-4. **Verifica que el servidor está funcionando**
+4. **Verify the server is running**
 
-   Abre tu navegador web y visita:
+   Open your web browser and visit:
 
    ```
    http://localhost:35000
    ```
 
-   Deberías ver una página con formularios de ejemplo que demuestran las capacidades del servidor.
+   You should see a page with example forms that demonstrate the server's capabilities.
+
+## Architecture
+
+### Project Structure
+
+The prototype follows a standard Maven project structure with clear separation of concerns:
+
+```
+httpserver/
+├── pom.xml
+├── README.md
+└── src/
+    ├── main/
+    │   ├── java/
+    │   │   └── com/
+    │   │       └── mycompany/
+    │   │           └── httpserver/
+    │   │               ├── HttpServer.java          # Main HTTP server implementation
+    │   │               ├── EchoServer/
+    │   │               │   ├── EchoClient.java      # Echo client for testing
+    │   │               │   └── EchoServer.java      # Simple echo server
+    │   │               └── examplesHttp/
+    │   │                   ├── URLParser.java       # URL parsing utilities
+    │   │                   └── URLReader.java       # URL reading utilities
+    │   └── resources/
+    │       ├── index.html                           # Main HTML page
+    │       ├── images/
+    │       │   ├── favicon.ico                      # Website favicon
+    │       │   ├── favicon.png                      # Alternative favicon
+    │       │   ├── otroUsuario.jpg                  # User avatar image
+    │       │   └── usuario.png                      # User avatar image
+    │       ├── scripts/
+    │       │   └── script.js                        # Client-side JavaScript
+    │       └── styles/
+    │           └── style.css                        # CSS styling
+    └── test/
+        └── java/                                    # Unit tests directory
+```
+
+### Server Architecture
+
+The HTTP server is built using Java's Socket API and follows these principles:
+
+1. **Single-threaded request handling**: Processes one request at a time
+2. **File type detection**: Based on file extensions (.html, .css, .js, .png, .jpg, .ico)
+3. **Content-Type mapping**: Automatic MIME type assignment
+4. **Static file serving**: Direct file system access for resources
+5. **REST endpoint**: Simple JSON response service
+
+### Accessing Different Content Types
+
+The server can serve various types of content directly. Here are examples:
+
+#### Main Application
+
+```
+http://localhost:35000/
+```
+
+Serves the main HTML page with interactive forms.
+
+#### CSS Stylesheets (Raw)
+
+```
+http://localhost:35000/styles/style.css
+```
+
+Returns pure CSS content with `Content-Type: text/css`
+
+#### JavaScript Files (Raw)
+
+```
+http://localhost:35000/scripts/script.js
+```
+
+Returns pure JavaScript content with `Content-Type: text/javascript`
+
+#### Images (Raw Binary)
+
+```
+http://localhost:35000/usuario.png
+http://localhost:35000/favicon.ico
+http://localhost:35000/otroUsuario.jpg
+```
+
+Returns binary image content with appropriate `Content-Type: image/*`
+
+#### REST API Endpoint
+
+```
+http://localhost:35000/app/hello?name=YourName
+```
+
+Returns JSON response: `{"mensaje": "Hola YourName"}`
+
+### Content Type Handling
+
+The server automatically detects and serves content with proper MIME types:
+
+| File Extension | Content-Type      | Description      |
+| -------------- | ----------------- | ---------------- |
+| `.html`        | `text/html`       | HTML documents   |
+| `.css`         | `text/css`        | Stylesheet files |
+| `.js`          | `text/javascript` | JavaScript files |
+| `.png`         | `image/png`       | PNG images       |
+| `.jpg/.jpeg`   | `image/jpg`       | JPEG images      |
+| `.ico`         | `image/ico`       | Icon files       |
 
 ## Running the tests
 
-Para ejecutar las pruebas automatizadas del sistema:
+To run the automated system tests:
 
 ```
 mvn test
@@ -69,88 +176,64 @@ mvn test
 
 ### Break down into end to end tests
 
-Las pruebas end-to-end verifican que el servidor puede:
+The end-to-end tests verify that the server can:
 
-- Servir archivos HTML correctamente
-- Entregar recursos estáticos (CSS, JavaScript, imágenes)
-- Manejar servicios REST básicos
-- Responder con códigos de estado HTTP apropiados
+- Serve HTML files correctly
+- Deliver static resources (CSS, JavaScript, images)
+- Handle basic REST services
+- Respond with appropriate HTTP status codes
 
 ```
 mvn test -Dtest=HttpServerIntegrationTest
 ```
 
-### And coding style tests
-
-Las pruebas de estilo de código verifican que el código sigue las convenciones de Java y está bien documentado:
-
-```
-mvn checkstyle:check
-```
-
 ## Deployment
 
-Para desplegar el servidor en un sistema de producción:
+To deploy the server on a production system:
 
-1. **Construye el JAR ejecutable:**
+1. **Build the executable JAR:**
 
    ```
    mvn package
    ```
 
-2. **Ejecuta el JAR:**
+2. **Configure the firewall** to allow connections on port 35000
 
-   ```
-   java -jar target/httpserver-1.0-SNAPSHOT.jar
-   ```
-
-3. **Configura el firewall** para permitir conexiones en el puerto 35000
-
-**Nota:** Para producción, considera cambiar el puerto por defecto editando la constante `PORT` en `HttpServer.java`
+**Note:** For production, consider changing the default port by editing the `PORT` constant in `HttpServer.java`
 
 ## Built With
 
-- **Java 21** - Lenguaje de programación principal
-- **Maven** - Gestión de dependencias y construcción del proyecto
-- **Socket API** - Para la comunicación de red de bajo nivel
-- **Java NIO** - Para manejo eficiente de archivos e I/O
+- **Java 21** - Main programming language
+- **Maven** - Dependency management and project build
+- **Socket library** - For low-level network communication
+- **Java NIO** - For efficient file handling and I/O
 
-## Funcionalidades
+## Features
 
-El servidor HTTP implementa las siguientes características:
+The HTTP server implements the following characteristics:
 
-- ✅ Servir archivos HTML estáticos
-- ✅ Servir archivos CSS para estilos
-- ✅ Servir archivos JavaScript
-- ✅ Servir imágenes (PNG, JPG, ICO)
-- ✅ Servicio REST simple (`/app/hello?name=valor`)
-- ✅ Manejo de errores 404
-- ✅ Soporte para múltiples clientes concurrentes
+- ✅ Serve static HTML files
+- ✅ Serve CSS files for styling
+- ✅ Serve JavaScript files
+- ✅ Serve images (PNG, JPG, ICO)
+- ✅ Simple REST service (`/app/hello?name=value`)
+- ✅ Handle 404 errors
 
 ## Contributing
 
-Si deseas contribuir al proyecto:
+If you want to contribute to the project:
 
-1. Haz fork del repositorio
-2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
-3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
-4. Push a la rama (`git push origin feature/AmazingFeature`)
-5. Abre un Pull Request
-
-## Versioning
-
-Este proyecto usa [SemVer](http://semver.org/) para el versionado. Para ver las versiones disponibles, revisa los [tags en este repositorio](https://github.com/SebastianCardona-P/AREP-TALLER1/tags).
+1. Fork the repository
+2. Create a branch for your feature (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
 ## Authors
 
-- **Sebastian Cardona Parra** - _Trabajo inicial_ - [SebastianCardona-P](https://github.com/SebastianCardona-P)
-
-## License
-
-Este proyecto está licenciado bajo la Licencia MIT - ver el archivo [LICENSE.md](LICENSE.md) para detalles.
+- **Sebastian Cardona Parra** - [SebastianCardona-P](https://github.com/SebastianCardona-P)
 
 ## Acknowledgments
 
-- Inspirado en los conceptos de redes y protocolos HTTP
-- Implementación educativa para el curso de Arquitecturas Empresariales (AREP)
-- Gracias a los profesores y compañeros que contribuyeron con ideas y feedback
+- Inspired by networking and HTTP protocol concepts
+- Educational implementation for the Enterprise Architectures (AREP) course
